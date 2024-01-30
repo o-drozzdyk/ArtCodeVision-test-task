@@ -10,12 +10,8 @@ export default defineComponent({
       title: '',
       description: '',
       price: '',
-      // price: 0,
-      // discountPercentage: 0,
       discountPercentage: '',
-      // rating: 0,
       rating: '',
-      // stock: 0,
       stock: '',
       brand: '',
       category: '',
@@ -24,46 +20,7 @@ export default defineComponent({
 
       product: {} as Product,
     };
-    // return {
-    //   "title": this.product?.title || '',
-    //   "description": this.product?.description || '',
-    //   "price": this.product?.price || '',
-    //   "discountPercentage": this.product?.discountPercentage || '',
-    //   "rating": this.product?.rating || '',
-    //   "stock": this.product?.stock || '',
-    //   "brand": this.product?.brand || '',
-    //   "category": this.product?.category || '',
-    //   "thumbnail": this.product?.thumbnail || '',
-    //   "images": this.product?.images || [],
-    // };
   },
-  // computed: {
-  //   product(): Product | undefined {
-  //     const id = this.$route.params.id;
-  //     const product = store.products.find(item => item.id === +id);
-
-  //     return product;
-  //   },
-  // },
-  // watch: {
-  //   product: {
-  //     immediate: true,
-  //     handler(newProduct) {
-  //       if (newProduct) {
-  //         this.title = newProduct.title;
-  //         this.description = newProduct.description;
-  //         this.price = newProduct.price;
-  //         this.discountPercentage = newProduct.discountPercentage;
-  //         this.rating = newProduct.rating;
-  //         this.stock = newProduct.stock;
-  //         this.brand = newProduct.brand;
-  //         this.category = newProduct.category;
-  //         this.thumbnail = newProduct.thumbnail;
-  //         this.images = newProduct.images;
-  //       }
-  //     },
-  //   },
-  // },
   mounted() {
     const id = this.$route.params.id;
     const foundProduct = store.products.find(item => item.id === +id);

@@ -16,7 +16,6 @@ export default defineComponent({
       query: '',
       sortOption: SortOptions.Default,
       SortOptions,
-      // sortOption: 'default' as string,
     };
   },
   components: {
