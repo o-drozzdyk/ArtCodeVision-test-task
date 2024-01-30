@@ -6,27 +6,32 @@ import Buttons from '@/components/Buttons.vue';
 
 export default defineComponent({
   name: 'ProductItem',
-  data() {
-    return {
-      actualPrice: 0,
-    };
+
+  components: {
+    Buttons,
   },
+
   props: {
     product: {
       type: Object as () => Product,
       required: true,
     },
   },
-  components: {
-    Buttons,
+
+  data() {
+    return {
+      actualPrice: 0,
+    };
   },
-  mounted() {
-    this.actualPrice = getPriceWithDiscount(this.product.price, this.product.discountPercentage);
-  },
+
   methods: {
     clickHandler() {
-      this.$router.push(`/${this.product.id}`);
+      this.$router.push(`/products/${this.product.id}`);
     },
+  },
+
+  mounted() {
+    this.actualPrice = getPriceWithDiscount(this.product.price, this.product.discountPercentage);
   },
 });
 </script>
@@ -34,7 +39,11 @@ export default defineComponent({
 <template>
   <article class="product" @click="clickHandler">
     <div class="product__photo-container">
-      <img :src="product.thumbnail" alt="Product photo" class="product__photo-container-img" />
+      <img
+        :src="product.thumbnail"
+        alt="Product photo"
+        class="product__photo-container-img"
+      />
     </div>
 
     <div class="product__info">
@@ -79,6 +88,7 @@ export default defineComponent({
   gap: 20px;
 
   width: 100%;
+  max-width: 334px;
   padding: 16px;
 
   border: 1px solid $color-grey;

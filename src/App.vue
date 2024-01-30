@@ -3,7 +3,11 @@
     <header class="page__header">
       <nav class="page__header__nav">
         <router-link to="/" class="page__header__nav__logo">
-          <img src="img/logo.svg" alt="Logo" class="page__header__nav__logo__img" />
+          <img 
+            src="img/logo.svg"
+            alt="Logo"
+            class="page__header__nav__logo__img" 
+          />
         </router-link>
 
         <router-link to="/create" class="page__header__nav__create">Create</router-link>

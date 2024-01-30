@@ -1,12 +1,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Product } from '@/types/Product';
 import { getPriceWithDiscount } from '@/assets/helpers';
 import Buttons from '@/components/Buttons.vue';
 import { store } from '@/assets/store';
+import { Product } from '@/types/Product';
 
 export default defineComponent({
   name: 'ProductDetailsView',
+
+  components: {
+    Buttons,
+  },
+
   data() {
     return {
       product: {} as Product,
@@ -14,30 +19,10 @@ export default defineComponent({
       actualPrice: 0,
     };
   },
-  components: {
-    Buttons,
-  },
-  async mounted() {
-    const id = this.$route.params.id || 0;
 
-    try {
-      const response = await fetch(`https://dummyjson.com/products/${id}`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      this.product = data;
-      this.currentPhoto = data.images[0];
-      this.actualPrice = getPriceWithDiscount(this.product.price, this.product.discountPercentage);
-    } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
-      this.product.id = +id;
-    }
-  },
   methods: {
     handlePhotoClick(photoUrl: string) {
       this.currentPhoto = photoUrl;
-      console.log('curr photo:', this.currentPhoto);
     },
     handleUpdateClick() {
       this.$router.push({
@@ -46,17 +31,29 @@ export default defineComponent({
       });
     },
     handleDeleteClick() {
+      if (this.product.id !== 101) {
       fetch(`https://dummyjson.com/products/${this.product.id}`, {
         method: 'DELETE',
       })
       .then(res => res.json())
-      .then(() => {
-        store.products = [...store.products.filter(productItem => productItem.id !== this.product.id)];
-        console.log(store.products);
+      .then((deletedProduct) => {
+        store.products = [...store.products.filter(productItem => productItem.id !== deletedProduct.id)];
         this.$router.push('/');
       });
+    } else {
+      store.products = [...store.products.filter(productItem => productItem.id !== this.product.id)];
+      this.$router.push('/');
+    }
       },
     },
+
+  async mounted() {
+    const id = this.$route.params.id || 0;
+
+    this.product = store.products.find(item => item.id === +id) || {} as Product;
+    this.currentPhoto = this.product.images[0];
+    this.actualPrice = getPriceWithDiscount(this.product.price, this.product.discountPercentage);
+  },
 });
 </script>
 
@@ -146,7 +143,7 @@ export default defineComponent({
           <p class="details__main__info__price-text">Price:</p>
 
           <div class="details__main__info__price-prices">
-            <p class="details__main__info__price-prices-old">{{ `$${product.price}` }}</p>
+            <p v-if="product.price !== actualPrice" class="details__main__info__price-prices-old">{{ `$${product.price}` }}</p>
 
             <p class="details__main__info__price-prices-discount">{{ `$${actualPrice}` }}</p>
           </div>

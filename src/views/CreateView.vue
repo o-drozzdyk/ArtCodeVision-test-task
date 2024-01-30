@@ -1,109 +1,107 @@
 <script lang="ts">
-import { Product } from '@/types/Product';
 import { defineComponent } from 'vue';
 import { store } from '@/assets/store';
+import { Product } from '@/types/Product';
 
 export default defineComponent({
   name: 'CreateView',
-  data() {
-    return {
-      title: '',
-      description: '',
-      price: '',
-      discountPercentage: '',
-      rating: '',
-      stock: '',
-      brand: '',
-      category: '',
-      thumbnail: '',
-      images: [] as string[],
 
-      product: {} as Product,
+  data(): {product: Product, photoUrl: string} {
+    return {
+      product: {
+        id: 0,
+        title: '',
+        description: '',
+        price: 0,
+        discountPercentage: 0,
+        rating: 5,
+        stock: 0,
+        brand: '',
+        category: '',
+        thumbnail: '',
+        images: [] as string[],
+      },
+      photoUrl: '',
     };
   },
-  mounted() {
-    const id = this.$route.params.id;
-    const foundProduct = store.products.find(item => item.id === +id);
 
-    if (foundProduct) {
-      this.product = foundProduct;
-
-      this.title = foundProduct.title;
-      this.description = foundProduct.description;
-      this.price = foundProduct.price.toString();
-      this.discountPercentage = foundProduct.discountPercentage.toString();
-      this.rating = foundProduct.rating.toString();
-      this.stock = foundProduct.stock.toString();
-      this.brand = foundProduct.brand;
-      this.category = foundProduct.category;
-      this.thumbnail = foundProduct.thumbnail;
-      this.images = foundProduct.images;
-    }
-  },
   methods: {
+    addPhoto() {
+      if (this.photoUrl.length > 0) {
+        this.product.images.push(this.photoUrl);
+      }
+    },
+    deletePhoto(url: string) {
+      this.product.images = this.product.images.filter(photo => photo !== url);
+    },
     handleFormSubmit() {
       if (
-        this.title &&
-        this.description &&
-        this.price &&
-        this.discountPercentage &&
-        this.rating &&
-        this.stock &&
-        this.brand &&
-        this.category &&
-        this.thumbnail) {
-        if (Object.keys(this.product).length === 0) {
+        this.product.title &&
+        this.product.description &&
+        this.product.price &&
+        this.product.rating &&
+        this.product.stock &&
+        this.product.brand &&
+        this.product.category &&
+        this.product.thumbnail) {
+        if (this.product.id !== 0) {
+          if (this.product.id !== 101) {
+            fetch(`https://dummyjson.com/products/${this.product.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                title: this.product.title,
+                description: this.product.description,
+                price: this.product.price,
+                discountPercentage: this.product.discountPercentage,
+                rating: this.product.rating,
+                stock: this.product.stock,
+                brand: this.product.brand,
+                category: this.product.category,
+                thumbnail: this.product.thumbnail,
+                images: [...this.product.images],
+              })
+            })
+              .then(res => res.json())
+              .then((updatedProduct) => {
+                this.product = { ...updatedProduct };
+                store.products = store.products.map(item => {
+                  return item.id === updatedProduct.id
+                    ? updatedProduct
+                    : item;
+                })
+                this.$router.push('/');
+              });
+          } else {
+            store.products = store.products.map(item => {
+              return item.id === this.product.id
+                ? this.product
+                : item;
+            })
+            this.$router.push('/');
+          }
+        } else {
           fetch('https://dummyjson.com/products/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              title: this.title,
-              description: this.description,
-              price: +this.price,
-              discountPercentage: +this.discountPercentage,
-              rating: +this.rating,
-              stock: +this.stock,
-              brand: this.brand,
-              category: this.category,
-              thumbnail: this.thumbnail,
-              images: [...this.images],
+              title: this.product.title,
+              description: this.product.description,
+              price: +this.product.price,
+              discountPercentage: +this.product.discountPercentage,
+              rating: +this.product.rating,
+              stock: +this.product.stock,
+              brand: this.product.brand,
+              category: this.product.category,
+              thumbnail: this.product.thumbnail,
+              images: [...this.product.images],
             })
           })
             .then(res => res.json())
             .then((newProduct) => {
-              console.log(newProduct);
               store.products = [...store.products, { ...newProduct }];
-              console.log('added', store.products);
               this.$router.push('/');
             });
-        } else {
-          fetch(`https://dummyjson.com/products/${this.product.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              title: this.title,
-              description: this.description,
-              price: +this.price,
-              discountPercentage: +this.discountPercentage,
-              rating: +this.rating,
-              stock: +this.stock,
-              brand: this.brand,
-              category: this.category,
-              thumbnail: this.thumbnail,
-              images: [...this.images],
-            })
-          })
-          .then(res => res.json())
-          .then((updatedProduct) => {
-            console.log(updatedProduct);
-            this.product = { ...updatedProduct };
-            store.products = store.products.map(item => {
-              return item.id === updatedProduct.id
-                ? updatedProduct
-                : item;
-            })
-            this.$router.push('/');
-          });
         }
       }
     },
@@ -111,73 +109,175 @@ export default defineComponent({
       this.$router.push('/');
     },
   },
+
+  mounted() {
+    const id = this.$route.params.id;
+    const foundProduct = store.products.find(item => item.id === +id);
+
+    if (foundProduct) {
+      this.product = { ...foundProduct };
+    }
+  },
 });
 </script>
 
 <template>
   <div class="form">
-    <h1 class="form__title">{{ Object.keys(product).length > 0 ? 'Update product' : 'Add new product' }}</h1>
+    <h1 class="form__title">
+      {{ product.id !== 0 ? 'Update product' : 'Add new product' }}
+    </h1>
 
     <form @submit.prevent="handleFormSubmit" class="form__content">
       <div class="form-group">
         <label for="title" class="form-group__label">Title:</label>
-        <input id="title" v-model="title" type="text" class="form-group__input" required />
+        <input
+          id="title"
+          v-model="product.title"
+          type="text"
+          class="form-group__input"
+          required 
+        />
       </div>
 
       <div class="form-group">
         <label for="description" class="form-group__label">Description:</label>
-        <input id="description" v-model="description" class="form-group__input" required />
+        <input
+          id="description"
+          v-model="product.description"
+          class="form-group__input"
+          required
+        />
       </div>
 
       <div class="form-group">
         <label for="price" class="form-group__label">Price:</label>
-        <input id="price" v-model.number="price" class="form-group__input" type="number" min="0" required />
+        <input
+          id="price"
+          v-model.number="product.price"
+          class="form-group__input"
+          type="number"
+          min="0"
+          required
+        />
       </div>
 
       <div class="form-group">
         <label for="discountPercentage" class="form-group__label">Discount Percentage:</label>
-        <input id="discountPercentage" v-model.number="discountPercentage" class="form-group__input" type="number" min="0"
-          max="100">
+        <input
+         id="discountPercentage"
+         v-model.number="product.discountPercentage"
+         class="form-group__input"
+         type="number"
+         min="0"
+         max="100" 
+        />
       </div>
 
       <div class="form-group">
         <label for="rating" class="form-group__label">Rating:</label>
-        <input id="rating" v-model.number="rating" type="number" class="form-group__input" min="0" max="5" step="0.1">
+        <input
+          id="rating"
+          v-model.number="product.rating"
+          type="number"
+          class="form-group__input"
+          min="0"
+          max="5"
+          step="0.1"
+        />
       </div>
 
       <div class="form-group">
         <label for="stock" class="form-group__label">Stock:</label>
-        <input id="stock" v-model.number="stock" type="number" class="form-group__input" min="0">
+        <input
+          id="stock"
+          v-model.number="product.stock"
+          type="number"
+          class="form-group__input"
+          min="0"
+        />
       </div>
 
       <div class="form-group">
         <label for="brand" class="form-group__label">Brand:</label>
-        <input id="brand" v-model="brand" class="form-group__input" type="text">
+        <input
+          id="brand"
+          v-model="product.brand"
+          class="form-group__input"
+          type="text"
+        />
       </div>
 
       <div class="form-group">
         <label for="category" class="form-group__label">Category:</label>
-        <input id="category" v-model="category" class="form-group__input" type="text">
+        <input
+          id="category"
+          v-model="product.category"
+          class="form-group__input"
+          type="text"
+        />
       </div>
 
       <div class="form-group">
         <label for="thumbnail" class="form-group__label">Thumbnail URL:</label>
-        <input id="thumbnail" v-model="thumbnail" class="form-group__input" type="url">
+        <input
+          id="thumbnail"
+          v-model="product.thumbnail"
+          class="form-group__input"
+          type="url"
+        />
       </div>
 
       <div class="form-group">
         <label class="form-group__label">Images URLs:</label>
-        <input v-for="(image, index) in images" :key="image" v-model="images[index]" class="form-group__input" type="url"
-          :placeholder="'Image URL ' + (index + 1)">
-        <input class="form-group__input" type="url">
+        <div 
+          v-for="(image, index) in product.images" 
+          :key="image" 
+          class="form-group__container"
+        >
+          <input  
+            v-model="product.images[index]"
+            class="form-group__container-input" 
+            type="url" 
+          />
+
+          <img 
+            src="img/icons/cross.svg" 
+            alt="Delete" 
+            class="form-group__container-icon"
+            @click.prevent="deletePhoto(image)"
+          />
+        </div>
+        
+        <div class="form-group__container">
+          <input 
+            type="url"
+            class="form-group__container-input"
+            v-model="photoUrl"
+          />
+
+          <img 
+            src="img/icons/plus.svg"
+            alt="Add"
+            class="form-group__container-icon"
+            @click.prevent="addPhoto"
+          />
+        </div>
       </div>
 
-      <button type="button" class="form__content-button form__content-button--cancel" @click.prevent="handleCancelClick">
+      <button
+        type="button"
+        class="form__content-button form__content-button--cancel"
+        @click.prevent="handleCancelClick"
+      >
         Cancel
       </button>
 
-      <button type="submit" class="form__content-button form__content-button--add" @click.prevent="handleFormSubmit">
-        {{ Object.keys(product).length > 0 ? 'Update' : 'Create' }}
+      <button
+        type="submit"
+        class="form__content-button form__content-button--add"
+        @click.prevent="handleFormSubmit"
+      >
+        {{ product.id !== 0 ? 'Update' : 'Create' }}
       </button>
     </form>
   </div>
@@ -239,6 +339,26 @@ export default defineComponent({
 
     &__label {
       align-self: start;
+    }
+
+    &__container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+
+      &-input {
+        padding: 8px;
+        width: 100%;
+        border-radius: 5px;
+      }
+
+      &-icon {
+        width: 24px;
+        height: 24px;
+        opacity: 0.5;
+        cursor: pointer;
+      }
     }
 
     &__input {

@@ -13,7 +13,11 @@ export default defineComponent({
     </button>
 
     <button type="button" class="buttons-favourites">
-      <img src="img/icons/heart.svg" alt="Heart" class="buttons-favourites__icon" />
+      <img 
+        src="img/icons/heart.svg"
+        alt="Heart"
+        class="buttons-favourites__icon" 
+      />
     </button>
   </div>
 </template>

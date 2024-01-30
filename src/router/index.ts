@@ -10,6 +10,11 @@ const routes: Array<RouteRecordRaw> = [
     component: HomeView,
   },
   {
+    path: '/products/:id',
+    name: 'productDetails',
+    component: ProductDetailsView,
+  },
+  {
     path: '/create',
     name: 'create',
     component: CreateView,
@@ -18,11 +23,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/update/:id',
     name: 'update',
     component: CreateView,
-  },
-  {
-    path: '/:id',
-    name: 'productDetails',
-    component: ProductDetailsView,
   },
 ];
 

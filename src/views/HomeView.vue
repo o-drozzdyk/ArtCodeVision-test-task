@@ -2,15 +2,15 @@
 import { defineComponent } from 'vue';
 import ProductList from '@/components/ProductList.vue';
 import { store } from '@/assets/store';
-
-enum SortOptions {
-  Default = 'default',
-  Title = 'title',
-  Rating = 'rating',
-}
+import { SortOptions } from '@/types/SortOptions';
 
 export default defineComponent({
   name: 'HomeView',
+
+  components: {
+    ProductList,
+  },
+
   data() {
     return {
       query: '',
@@ -18,9 +18,7 @@ export default defineComponent({
       SortOptions,
     };
   },
-  components: {
-    ProductList,
-  },
+
   computed: {
     products() {
       let products = [...store.products];
@@ -43,19 +41,20 @@ export default defineComponent({
       return products;
     }
   },
+
   async mounted() {
-  if(store.products.length === 0) {
-  try {
-    const response = await fetch('https://dummyjson.com/products');
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+    if (store.products.length === 0) {
+      try {
+        const response = await fetch('https://dummyjson.com/products');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        store.products = data.products;
+      } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+      }
     }
-    const data = await response.json();
-    store.products = data.products;
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-  }
-}
   },
 });
 </script>
@@ -75,6 +74,7 @@ export default defineComponent({
         </select>
       </div>
     </div>
+
     <ProductList :products="products" />
   </div>
 </template>

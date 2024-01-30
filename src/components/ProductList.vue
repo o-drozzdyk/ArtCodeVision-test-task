@@ -5,14 +5,16 @@ import ProductItem from '@/components/ProductItem.vue';
 
 export default defineComponent({
   name: 'ProductList',
+
+  components: {
+    ProductItem,
+  },
+
   props: {
     products: {
       type: Array as () => Product[],
       required: true,
     },
-  },
-  components: {
-    ProductItem,
   },
 });
 </script>
