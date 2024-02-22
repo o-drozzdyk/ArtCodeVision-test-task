@@ -17,6 +17,6 @@ git commit -m 'deploy'
 git branch -M main
 
 # if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f https://github.com/o-drozzdyk/ArtCodeVision-test-task.git main:gh-pages
+git push -f https://github.com/o-drozzdyk/Universal-Market.git main:gh-pages
 
 cd -

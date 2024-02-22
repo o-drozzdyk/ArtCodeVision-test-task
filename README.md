@@ -1,10 +1,10 @@
-# ArtCodeVision-test-task
+# Universal Market
 
-This repository contains the source code for the `ArtCodeVision-test-task`, a web application built using Vue 3, vue-router, TypeScript, and SCSS. This project demonstrates a simple yet effective interface for product management.
+This repository contains the source code for the `Universal Market`, a web application built using Vue 3, vue-router, TypeScript, and SCSS. This project demonstrates a simple yet effective interface for product management.
 
 ## Demo
 
-You can view a live demo of the application here: [Demo](https://o-drozzdyk.github.io/ArtCodeVision-test-task/)
+You can view a live demo of the application here: [Demo](https://o-drozzdyk.github.io/Universal-Market/)
 
 ## Technologies
 
@@ -27,7 +27,7 @@ To get a local copy up and running follow these simple steps.
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/YOUR_USERNAME/ArtCodeVision-test-task.git
+   git clone https://github.com/YOUR_USERNAME/Universal-Market.git
    ```
 
 2. Install NPM packages
